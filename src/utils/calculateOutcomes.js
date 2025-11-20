@@ -48,22 +48,28 @@ function anyEmpty(values) {
 
 // G4
 export function domain1Study({ B, C, D, E, F }) {
+  // Treat D as optional if C is no-like
+  const Dvalue = isNoLike(C) ? D || "not filled in" : D;
+
+  // High risk conditions
   if (
     isNo(F) ||
     (isNoLike(E) && isYes(F))
   ) return "high risk";
 
+  // Some concerns conditions
   if (
     isNoLike(B) &&
-    allYes([C, D, E, F])
+    allYes([C, Dvalue, E, F])
   ) return "some concerns";
 
   if (
-    anyNoLike([C, D]) &&
+    anyNoLike([C, Dvalue]) &&
     anyYes([E, F])
   ) return "some concerns";
 
-  if (anyYes([B, C, D, E, F])) return "low risk";
+  // Low risk condition
+  if (anyYes([B, C, Dvalue, E, F])) return "low risk";
 
   return "not filled in";
 }
@@ -123,15 +129,18 @@ export function domain2Study({ O, P }) {
 
 // U4
 export function domain2Policy({ R, S, T }) {
+  // Treat T as optional if S is no-like
+  const Tvalue = isNoLike(S) ? T || "not filled in" : T;
+
   const combosLow = [
-    [R, S, T].every(isYes),
-    [R, S, T].every(v => v === "probably yes"),
-    (isYes(R) && S === "probably yes" && isYes(T)),
-    (isYes(R) && S === "probably yes" && T === "probably yes"),
-    (isYes(R) && isYes(S) && T === "probably yes"),
-    (R === "probably yes" && isYes(S) && isYes(T)),
-    (R === "probably yes" && isYes(S) && T === "probably yes"),
-    (R === "probably yes" && S === "probably yes" && isYes(T))
+    [R, S, Tvalue].every(isYes),
+    [R, S, Tvalue].every(v => v === "probably yes"),
+    (isYes(R) && S === "probably yes" && isYes(Tvalue)),
+    (isYes(R) && S === "probably yes" && Tvalue === "probably yes"),
+    (isYes(R) && isYes(S) && Tvalue === "probably yes"),
+    (R === "probably yes" && isYes(S) && isYes(Tvalue)),
+    (R === "probably yes" && isYes(S) && Tvalue === "probably yes"),
+    (R === "probably yes" && S === "probably yes" && isYes(Tvalue))
   ];
   if (combosLow.some(Boolean)) return "low risk";
 
@@ -146,10 +155,10 @@ export function domain2Policy({ R, S, T }) {
   if (combosHigh.some(Boolean)) return "high risk";
 
   const combosSome = [
-    (isYes(R) && isYes(S) && isNoLike(T)),
-    (isYes(R) && S === "probably yes" && isNoLike(T)),
-    (R === "probably yes" && isYes(S) && isNoLike(T)),
-    (R === "probably yes" && S === "probably yes" && isNoLike(T))
+    (isYes(R) && isYes(S) && isNoLike(Tvalue)),
+    (isYes(R) && S === "probably yes" && isNoLike(Tvalue)),
+    (R === "probably yes" && isYes(S) && isNoLike(Tvalue)),
+    (R === "probably yes" && S === "probably yes" && isNoLike(Tvalue))
   ];
   if (combosSome.some(Boolean)) return "some concerns";
 
