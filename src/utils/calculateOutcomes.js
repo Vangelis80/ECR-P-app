@@ -51,6 +51,9 @@ export function domain1Study({ B, C, D, E, F }) {
   // Treat D as optional if C is no-like
   const Dvalue = isNoLike(C) ? D || "not filled in" : D;
 
+  // Rule: If C is yes-like, D must be filled in
+  if (isYes(C) && !D) return "not filled in";
+
   // High risk conditions
   if (
     isNo(F) ||
@@ -128,42 +131,43 @@ export function domain2Study({ O, P }) {
 }
 
 // U4
+
 export function domain2Policy({ R, S, T }) {
-  // Treat T as optional if S is no-like
-  const Tvalue = isNoLike(S) ? T || "not filled in" : T;
+  // 1. If R or S is empty → not filled in
+  if (!R || R === "not filled in" || !S || S === "not filled in") {
+    return "not filled in";
+  }
 
-  const combosLow = [
-    [R, S, Tvalue].every(isYes),
-    [R, S, Tvalue].every(v => v === "probably yes"),
-    (isYes(R) && S === "probably yes" && isYes(Tvalue)),
-    (isYes(R) && S === "probably yes" && Tvalue === "probably yes"),
-    (isYes(R) && isYes(S) && Tvalue === "probably yes"),
-    (R === "probably yes" && isYes(S) && isYes(Tvalue)),
-    (R === "probably yes" && isYes(S) && Tvalue === "probably yes"),
-    (R === "probably yes" && S === "probably yes" && isYes(Tvalue))
-  ];
-  if (combosLow.some(Boolean)) return "low risk";
+  // 2. If S is yes-like and T is empty → not filled in
+  if (isYes(S) && (!T || T === "not filled in")) {
+    return "not filled in";
+  }
 
-  const combosHigh = [
-    [R, S].every(isNoLike),
-    (isNoLike(R) && isYes(S)),
-    (isNoLike(R) && S === "probably yes"),
-    (R === "no information" && isNoLike(S)),
-    (R === "no information" && isYes(S)),
-    (R === "no information" && S === "probably yes")
-  ];
-  if (combosHigh.some(Boolean)) return "high risk";
+  // Now apply table-based logic:
 
-  const combosSome = [
-    (isYes(R) && isYes(S) && isNoLike(Tvalue)),
-    (isYes(R) && S === "probably yes" && isNoLike(Tvalue)),
-    (R === "probably yes" && isYes(S) && isNoLike(Tvalue)),
-    (R === "probably yes" && S === "probably yes" && isNoLike(Tvalue))
-  ];
-  if (combosSome.some(Boolean)) return "some concerns";
+  // ✅ Low risk
+  if (isYes(R) && isYes(S) && isYes(T)) {
+    return "low risk";
+  }
 
+  // ✅ Some concerns
+  if (isYes(R) && isYes(S) && isNoLike(T)) {
+    return "some concerns";
+  }
+
+  // ✅ High risk cases
+  if (
+    (isYes(R) && isNoLike(S) && (!T || isNoLike(T))) || // yes-like R, no-like S
+    (isNoLike(R) && isYes(S) && (!T || isYes(T))) ||    // no-like R, yes-like S
+    (isNoLike(R) && isNoLike(S))                        // both no-like
+  ) {
+    return "high risk";
+  }
+
+  // ✅ If nothing matches, fallback
   return "not filled in";
 }
+
 
 // V4
 export function domain2Combined(study, policy) {
