@@ -1,0 +1,338 @@
+{
+    "Domain 1: Inform not persuade": {
+        "study_level": {
+            "questions": [
+                {
+                    "id": "1.1",
+                    "question": "Were the aims/objectives for the study defined?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "1.2",
+                    "question": "Were the limitations of the study findings reported?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "1.2.1",
+                    "question": "If yes/probably yes to 1.2: Did the study propose ways to reduce limitations in the future?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "1.3",
+                    "question": "Were the study conclusions clearly connected to the findings of the study?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }, 
+		{
+                    "id": "1.4",
+                    "question": "Was emotive language avoided in communicating study findings and/or conclusions?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No"
+                    ]
+                }
+
+            ],
+            "outcome": ""
+        },
+        "policy_level": {
+            "questions": [
+                {
+                    "id": "1.5",
+                    "question": "Were the aims/objectives for the policy recommendations defined?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No"
+                    ]
+                },
+                {
+                    "id": "1.6",
+                    "question": "Were the limitations of the policy recommendations reported?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "1.7",
+                    "question": "Were the policy recommendations clearly connected to the findings of the study?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "1.8",
+                    "question": "Was accessible language used for the policy recommendations?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "1.9",
+                    "question": "Was emotive language avoided in policy recommendations?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "domain_outcome": ""
+    },
+    "Domain 2: Offer balance, not false balance": {
+        "study_level": {
+            "questions": [
+                {
+                    "id": "2.1",
+                    "question": "Were all aspects of the study findings reported?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No"
+                    ]
+                },
+                {
+                    "id": "2.2",
+                    "question": "Was an appropriate reporting guideline used for constructing the manuscript?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "policy_level": {
+            "questions": [
+                {
+                    "id": "2.3",
+                    "question": "Were multiple implications of the policy recommendations considered?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No"
+                    ]
+                },
+                {
+                    "id": "2.4",
+                    "question": "Was the existence of a current policy discussed?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "2.4.1",
+                    "question": "If yes/probably yes to 2.4: Was not changing the current policy considered?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "domain_outcome": ""
+    },
+    "Domain 3: Disclose uncertainties": {
+        "study_level": {
+            "questions": [
+                {
+                    "id": "3.1",
+                    "question": "Were uncertainties of the study findings reported?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "3.1.1",
+                    "question": "If yes/probably yes to 3.1: Did the study propose ways to reduce uncertainties in the future?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "policy_level": {
+            "questions": [
+                {
+                    "id": "3.2",
+                    "question": "Were uncertainties of the policy recommendations reported?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+		{
+                    "id": "3.2.1",
+                    "question": "If yes/probably yes to 3.2: Did the study adopt a precautionary principle perspective?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "domain_outcome": ""
+    },
+    "Domain 4: State evidence quality": {
+        "study_level": {
+            "questions": [
+                {
+                    "id": "4.1",
+                    "question": "Was the quality of the evidence used in the analysis considered?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                },
+                {
+                    "id": "4.1.1",
+                    "question": "If yes/probably yes to 4.1: Were specific metrics of evidence quality used??",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "policy_level": {
+            "questions": [
+                {
+                    "id": "4.2",
+                    "question": "Was the quality of the study findings, that formulated the evidence base for the policy recommendations, considered?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "domain_outcome": ""
+    },
+    "Domain 5: Pre-empt misunderstandings": {
+        "study_level": {
+            "questions": [
+                {
+                    "id": "5.1",
+                    "question": "Were potential misunderstandings about the study findings and conclusions pre-emptively addressed?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "policy_level": {
+            "questions": [
+                {
+                    "id": "5.2",
+                    "question": "Was the targeted audience for policy recommendations defined?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }, 
+		{
+                    "id": "5.3",
+                    "question": "Were potential misunderstandings for policy recommendations and potential concerns of the policy makers pre-emptively addressed?",
+                    "options": [
+                        "Yes",
+                        "Probably yes",
+                        "Probably no",
+                        "No",
+                        "No information"
+                    ]
+                }
+            ],
+            "outcome": ""
+        },
+        "domain_outcome": ""
+    },
+    "final_combined_outcome": ""
+}
