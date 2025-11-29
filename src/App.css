@@ -184,15 +184,18 @@
 }
 
 /* ---- Table-like outcome matrix (no grid lines) ---- */
+
 .outcome-matrix {
   margin: 20px auto 0;
-  max-width: 900px;
+  width: 100%; /* Ensure it fits the container */
   display: grid;
-  grid-template-columns: 140px repeat(5, 1fr) 140px; /* first col label, 5 domains, last col overall */
+  grid-template-columns: minmax(80px, 1fr) repeat(5, minmax(60px, 1fr)) minmax(80px, 1fr);
   grid-auto-rows: 56px;
-  gap: 10px;               /* spacing between cells (no borders) */
+  gap: 6px;
   align-items: center;
+  overflow-x: auto; /* fallback scroll if needed */
 }
+
 
 .outcome-matrix .cell {
   display: flex;
