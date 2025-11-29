@@ -254,9 +254,11 @@ export function domain4Study({ AD, AE }) {
 
 // AH4
 export function domain4Policy({ AG }) {
-  if (AG === "no information") return "some concerns";
-  if (["probably yes", "yes"].includes((AG || "").toLowerCase())) return "low risk";
-  if (["no", "probably no"].includes((AG || "").toLowerCase())) return "high risk";
+  const ag = (AG || "").trim().toLowerCase(); // normalize case and trim spaces
+
+  if (ag === "no information") return "some concerns";
+  if (["probably yes", "yes"].includes(ag)) return "low risk";
+  if (["no", "probably no"].includes(ag)) return "high risk";
   return "not filled in";
 }
 
@@ -275,9 +277,11 @@ export function domain4Combined(study, policy) {
 
 // AK4
 export function domain5Study({ AJ }) {
-  if (AJ === "no information") return "some concerns";
-  if (["probably yes", "yes"].includes((AJ || "").toLowerCase())) return "low risk";
-  if (["no", "probably no"].includes((AJ || "").toLowerCase())) return "high risk";
+  const aj = (AJ || "").trim().toLowerCase(); // normalize case and trim spaces
+
+  if (aj === "no information") return "some concerns";
+  if (["probably yes", "yes"].includes(aj)) return "low risk";
+  if (["no", "probably no"].includes(aj)) return "high risk";
   return "not filled in";
 }
 

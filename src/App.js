@@ -221,6 +221,9 @@ function App() {
             </div>
           )}
 
+{/* --- Custom table-like graph (no grid lines) --- */}
+<OutcomeMatrix results={results} overallOutcome={overallOutcome} />
+
           {/* Domain-by-domain results */}
           <div className="results">
             <h2>Results by Domain</h2>
@@ -307,6 +310,81 @@ function App() {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+// Helper: normalize outcome into classes
+function normalizeOutcome(value) {
+  const v = String(value || "not filled in").trim().toLowerCase();
+  if (v.includes("high")) return "high-risk";
+  if (v.includes("some")) return "some-concerns";
+  if (v.includes("low")) return "low-risk";
+  return "not-filled-in";
+}
+
+// A small colored circle
+// Updated: dot with custom tooltip support
+function OutcomeDot({ value }) {
+  const label = String(value || "Not filled in");
+  const cls = normalizeOutcome(value);
+
+  return (
+    <span
+      className={`dot ${cls}`}
+      data-tip={label}     // used by CSS ::after content
+      tabIndex={0}         // focusable for keyboard/accessibility
+      role="img"
+      aria-label={label}   // screen reader text
+    />
+  );
+}
+
+// The matrix component
+function OutcomeMatrix({ results, overallOutcome }) {
+  // Build domain list excluding the overall key
+  const domains = Object.entries(results).filter(
+    ([k, v]) => typeof v === "object" // domain entries have objects
+  );
+
+  // Ensure we only show 5 domains as per your spec
+  const firstFive = domains.slice(0, 5);
+
+  // Extract study/policy outcomes per domain
+  const studyOutcomes = firstFive.map(([_, res]) => res?.study_level);
+  const policyOutcomes = firstFive.map(([_, res]) => res?.policy_level);
+
+  return (
+    <div className="outcome-matrix">
+      {/* Row 1: headers */}
+      <div className="cell header empty" />
+      {firstFive.map((_, i) => (
+        <div key={`h-${i}`} className="cell header">
+          Domain {i + 1}
+        </div>
+      ))}
+      <div className="cell header">Overall</div>
+
+      {/* Row 2: Evidence + study level outcomes */}
+      <div className="cell row-label">Evidence</div>
+      {studyOutcomes.map((val, i) => (
+        <div key={`study-${i}`} className="cell">
+          <OutcomeDot value={val} />
+        </div>
+      ))}
+      {/* Merged overall cell spans rows 2-3 */}
+      <div className="cell overall merged">
+        <OutcomeDot value={overallOutcome} />
+      </div>
+
+      {/* Row 3: Policies + policy level outcomes */}
+      <div className="cell row-label">Policies</div>
+      {policyOutcomes.map((val, i) => (
+        <div key={`policy-${i}`} className="cell">
+          <OutcomeDot value={val} />
+        </div>
+      ))}
+      {/* Note: no cell here for last column; it's merged above */}
     </div>
   );
 }
