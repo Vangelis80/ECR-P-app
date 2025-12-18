@@ -155,10 +155,12 @@ export function domain2Policy({ R, S, T }) {
     return "some concerns";
   }
 
+ 
   // ✅ High risk cases
   if (
     (isYes(R) && isNoLike(S) && (!T || isNoLike(T))) || // yes-like R, no-like S
-    (isNoLike(R) && isYes(S) && (!T || isYes(T))) ||    // no-like R, yes-like S
+-   (isNoLike(R) && isYes(S) && (!T || isYes(T))) ||    // no-like R, yes-like S
++   (isNoLike(R) && isYes(S)) ||                        // no-like R, yes-like S (T already required above)
     (isNoLike(R) && isNoLike(S))                        // both no-like
   ) {
     return "high risk";
