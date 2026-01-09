@@ -20,10 +20,9 @@ function findOverallOutcome(results) {
     "overall_risk_of_bias",
     "risk_of_bias_overall",
     "overallassessment",
-    "finalcombinedoutcome", // super defensive
+    "finalcombinedoutcome",
   ];
 
-  // Try name-based detection
   for (const [key, value] of Object.entries(results)) {
     const nk = normalizeKey(key);
     if (candidates.includes(nk)) {
@@ -31,17 +30,12 @@ function findOverallOutcome(results) {
     }
   }
 
-  // If none matched by name, try shape-based detection:
-  // If exactly one non-object value exists, assume that's the overall.
-  const nonObjects = Object.entries(results).filter(
-    ([_, val]) => typeof val !== "object"
-  );
+  const nonObjects = Object.entries(results).filter(([_, val]) => typeof val !== "object");
   if (nonObjects.length === 1) {
     const [key, value] = nonObjects[0];
     return { key, value };
   }
 
-  // If multiple non-objects exist, prefer the one whose key contains "overall" or "final"
   const heuristic = nonObjects.find(([key]) => {
     const nk = normalizeKey(key);
     return nk.includes("overall") || nk.includes("final");
@@ -51,7 +45,6 @@ function findOverallOutcome(results) {
     return { key, value };
   }
 
-  // Could not find an overall outcome
   return { key: null, value: null };
 }
 
@@ -59,6 +52,7 @@ function App() {
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState({});
   const [showResults, setShowResults] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false); // ✅ Added state for instructions
 
   const handleAnswerChange = (domain, level, qid, value) => {
     setAnswers((prev) => ({
@@ -80,11 +74,50 @@ function App() {
     setShowResults(true);
   };
 
-  // Identify the overall outcome safely
   const { key: overallKey, value: overallOutcome } = findOverallOutcome(results);
-
-  // Build the list of domain entries excluding the overall key (if detected)
   const domainEntries = Object.entries(results).filter(([k]) => k !== overallKey);
+
+  // ✅ CSV Download Function
+  const downloadCSV = (data) => {
+    if (!data || Object.keys(data).length === 0) return;
+
+    const q = (val) => `"${String(val ?? "").replace(/"/g, '""')}"`;
+
+    const rows = [];
+
+    for (const [domain, res] of Object.entries(data)) {
+      if (normalizeKey(domain) === normalizeKey(overallKey)) continue;
+
+      const study = res && typeof res === "object" ? (res.study_level ?? "") : "";
+      const policy = res && typeof res === "object" ? (res.policy_level ?? "") : "";
+      const domainOutcome =
+        res && typeof res === "object"
+          ? (res.domain_outcome ?? "")
+          : (typeof res === "string" ? res : "");
+
+      rows.push([domain, study, policy, domainOutcome]);
+    }
+
+    if (overallOutcome !== null && overallOutcome !== undefined) {
+      rows.push(["Overall Outcome", "", "", overallOutcome]);
+    }
+
+    const headers = ["Domain", "Study Level", "Policy Level", "Domain Outcome"];
+    const lines = [
+      headers.map(q).join(","),
+      ...rows.map((r) => r.map(q).join(",")),
+    ];
+
+    const csvContent = lines.join("\r\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "ECR-P-results.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="app">
@@ -103,6 +136,56 @@ function App() {
         <div style={{ fontSize: "16px", color: "#2c4f3e" }}>
           Evidence Communication Rules for Policy
         </div>
+      </div>
+
+      {/* ✅ Instructions Toggle */}
+      <div
+        style={{
+          textAlign: "center",
+          marginBottom: "20px",
+          cursor: "pointer",
+          color: "#2c4f3e",
+          fontWeight: "bold",
+        }}
+        onClick={() => setShowInstructions(!showInstructions)}
+      >
+        Click here for instructions {showInstructions ? "▲" : "▼"}
+      </div>
+
+      {/* ✅ Collapsible Instructions */}
+      <div
+        style={{
+          maxHeight: showInstructions ? "500px" : "0",
+          overflow: "hidden",
+          transition: "max-height 0.5s ease",
+          backgroundColor: "#f9f9f9",
+          padding: showInstructions ? "15px" : "0 15px",
+          borderRadius: "8px",
+          boxShadow: showInstructions ? "0 2px 6px rgba(0, 0, 0, 0.1)" : "none",
+          marginBottom: "24px",
+          fontSize: "14px",
+          color: "#333",
+        }}
+      >
+        {showInstructions && (
+          <div>
+            Welcome to <strong>ECR-P!</strong> This tool can help you appraise
+            the quality of evidence and policy recommendations. Answer the
+            questions in each domain using the drop down menus and then click {" "}
+            <strong>Compute Results</strong>. You can also Download the Results
+            in a CSV file. More information on the tool can be found on the open
+            access paper{" "}
+            <a
+              href="https://link.springer.com/article/10.1186/s13643-025-02757-8"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#2c4f3e", fontWeight: "bold" }}
+            >
+              Evidence Communication Rules for Policy (ECR-P) critical appraisal tool
+            </a>
+            .
+          </div>
+        )}
       </div>
 
       {/* Question cards */}
@@ -165,46 +248,45 @@ function App() {
       })}
 
       {/* Compute button */}
-      
-<div style={{ textAlign: "center", marginTop: "20px" }}>
-  <button onClick={computeResults} className="button">
-    Compute Results
-  </button>
-  <p style={{ marginTop: "10px", fontSize: "14px", color: "#555" }}>
-    Scroll down for results
-  </p>
-</div>
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <button onClick={computeResults} className="button">
+          Compute Results
+        </button>
+        <p style={{ marginTop: "10px", fontSize: "14px", color: "#555" }}>
+          Scroll down for results
+        </p>
+      </div>
 
       {/* Results */}
-      {showResults && (
+      {showResults ? (
         <>
-          {/* Overall Risk of Bias (separate box) */}
+          {/* Overall Risk of Bias */}
           {overallOutcome !== null && overallOutcome !== undefined ? (
-<div className="overall-outcome-card">
-  <h2>Overall Risk of Bias</h2>
-  <p>
-    <span
-      className={`outcome ${String(overallOutcome)
-        .replace(/\s+/g, "-")
-        .toLowerCase()}`}
-    >
-      {String(overallOutcome)}
-    </span>
-  </p>
-  <div
-    style={{
-      marginTop: "10px",
-      fontSize: "14px",
-      color: "#555",
-      fontWeight: "normal",
-      lineHeight: "1.6",
-    }}
-  >
-    <div>low risk of bias = high quality</div>
-    <div>some concerns = moderate quality</div>
-    <div>high risk of bias = low quality</div>
-  </div>
-</div>
+            <div className="overall-outcome-card">
+              <h2>Overall Risk of Bias</h2>
+              <p>
+                <span
+                  className={`outcome ${String(overallOutcome)
+                    .replace(/\s+/g, "-")
+                    .toLowerCase()}`}
+                >
+                  {String(overallOutcome)}
+                </span>
+              </p>
+              <div
+                style={{
+                  marginTop: "10px",
+                  fontSize: "14px",
+                  color: "#555",
+                  fontWeight: "normal",
+                  lineHeight: "1.6",
+                }}
+              >
+                <div>low risk of bias = high quality</div>
+                <div>some concerns = moderate quality</div>
+                <div>high risk of bias = low quality</div>
+              </div>
+            </div>
           ) : (
             <div className="overall-outcome-card missing">
               <h2>Overall Risk of Bias</h2>
@@ -221,8 +303,15 @@ function App() {
             </div>
           )}
 
-{/* --- Custom table-like graph (no grid lines) --- */}
-<OutcomeMatrix results={results} overallOutcome={overallOutcome} />
+          {/* Matrix */}
+          <OutcomeMatrix results={results} overallOutcome={overallOutcome} />
+
+          {/* Download CSV Button */}
+          <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <button onClick={() => downloadCSV(results)} className="button">
+              Download Results (CSV)
+            </button>
+          </div>
 
           {/* Domain-by-domain results */}
           <div className="results">
@@ -271,7 +360,6 @@ function App() {
                           </span>
                         </p>
                       )}
-                      {/* In case your object uses different keys */}
                       {Object.entries(res)
                         .filter(
                           ([k]) =>
@@ -309,7 +397,7 @@ function App() {
             )}
           </div>
         </>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -323,8 +411,7 @@ function normalizeOutcome(value) {
   return "not-filled-in";
 }
 
-// A small colored circle
-// Updated: dot with custom tooltip support
+// A small colored circle with tooltip
 function OutcomeDot({ value }) {
   const label = String(value || "Not filled in");
   const cls = normalizeOutcome(value);
@@ -332,31 +419,23 @@ function OutcomeDot({ value }) {
   return (
     <span
       className={`dot ${cls}`}
-      data-tip={label}     // used by CSS ::after content
-      tabIndex={0}         // focusable for keyboard/accessibility
+      data-tip={label}
+      tabIndex={0}
       role="img"
-      aria-label={label}   // screen reader text
+      aria-label={label}
     />
   );
 }
 
 // The matrix component
 function OutcomeMatrix({ results, overallOutcome }) {
-  // Build domain list excluding the overall key
-  const domains = Object.entries(results).filter(
-    ([k, v]) => typeof v === "object" // domain entries have objects
-  );
-
-  // Ensure we only show 5 domains as per your spec
+  const domains = Object.entries(results).filter(([k, v]) => typeof v === "object");
   const firstFive = domains.slice(0, 5);
-
-  // Extract study/policy outcomes per domain
   const studyOutcomes = firstFive.map(([_, res]) => res?.study_level);
   const policyOutcomes = firstFive.map(([_, res]) => res?.policy_level);
 
   return (
     <div className="outcome-matrix">
-      {/* Row 1: headers */}
       <div className="cell header empty" />
       {firstFive.map((_, i) => (
         <div key={`h-${i}`} className="cell header">
@@ -365,26 +444,22 @@ function OutcomeMatrix({ results, overallOutcome }) {
       ))}
       <div className="cell header">Overall</div>
 
-      {/* Row 2: Evidence + study level outcomes */}
       <div className="cell row-label">Evidence</div>
       {studyOutcomes.map((val, i) => (
         <div key={`study-${i}`} className="cell">
           <OutcomeDot value={val} />
         </div>
       ))}
-      {/* Merged overall cell spans rows 2-3 */}
       <div className="cell overall merged">
         <OutcomeDot value={overallOutcome} />
       </div>
 
-      {/* Row 3: Policies + policy level outcomes */}
       <div className="cell row-label">Policies</div>
       {policyOutcomes.map((val, i) => (
         <div key={`policy-${i}`} className="cell">
           <OutcomeDot value={val} />
         </div>
       ))}
-      {/* Note: no cell here for last column; it's merged above */}
     </div>
   );
 }
